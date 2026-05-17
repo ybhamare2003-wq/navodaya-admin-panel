@@ -4,7 +4,7 @@ ARG NODE_VERSION=22
 # Builder
 # =========================
 
-FROM node:${NODE_VERSION}-alpine AS builder
+FROM node:${NODE_VERSION}-slim AS builder
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN npm run server-build
 # Runtime
 # =========================
 
-FROM node:${NODE_VERSION}-alpine
+FROM node:${NODE_VERSION}-slim
 
 WORKDIR /app
 
