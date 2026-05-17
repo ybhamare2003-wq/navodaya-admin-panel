@@ -1,12 +1,14 @@
-FROM node:22-slim
+FROM node:20-slim
 
 WORKDIR /app
 
+RUN npm install -g npm@11
+
 COPY . .
 
-RUN npm ci
+RUN npm ci --verbose
 
-RUN cd client && npm ci
+RUN cd client && npm ci --verbose
 
 RUN cd client && npm run build
 
