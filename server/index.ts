@@ -13,8 +13,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/businesses', businessRoutes);
 
 const clientPath = path.join(
-    __dirname,
-    '../client/dist'
+    process.cwd(),
+    'client/dist'
 );
 
 app.use(express.static(clientPath));
