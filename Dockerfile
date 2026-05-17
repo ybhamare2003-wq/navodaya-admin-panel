@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+RUN npm ci
 
-RUN cd client && npm install
+RUN cd client && npm ci
 
 RUN cd client && npm run build
 
