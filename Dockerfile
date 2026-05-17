@@ -1,36 +1,30 @@
-# =========================
-# Stage 1 — Build
-# =========================
-
 ARG NODE_VERSION=22
+
+# =========================
+# Builder
+# =========================
 
 FROM node:${NODE_VERSION}-alpine AS builder
 
 WORKDIR /app
 
-# Root deps
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Client deps
 COPY client/package*.json ./client/
 
-# Install deps
-RUN npm ci
-RUN cd client && npm ci
+RUN npm install
+RUN cd client && npm install
 
-# Copy source
 COPY . .
 
-# Build frontend
 RUN cd client && npm run build
 
-# Build backend
 RUN npm run server-build
 
 
 # =========================
-# Stage 2 — Runtime
+# Runtime
 # =========================
 
 FROM node:${NODE_VERSION}-alpine
@@ -39,14 +33,11 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Only runtime deps
 COPY package*.json ./
-RUN npm ci --omit=dev
 
-# Compiled backend
+RUN npm install --omit=dev
+
 COPY --from=builder /app/dist ./dist
-
-# Built frontend
 COPY --from=builder /app/client/dist ./client/dist
 
 EXPOSE 3000
