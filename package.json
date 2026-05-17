@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn server/index.ts",
-    "client-build": "cd client && npm run build",
     "server-build": "tsc",
-    "build": "npm run client-build && npm run server-build",
     "start": "node dist/server/index.js"
   },
   "keywords": [],
