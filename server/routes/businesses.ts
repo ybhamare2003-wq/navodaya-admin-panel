@@ -6,37 +6,14 @@ const router = Router();
 router.get('/', async (_, res) => {
     try {
         const totalBusinessesQuery = pool.query(`
-      SELECT COUNT(*) FROM businesses
-    `);
+            SELECT COUNT(*) FROM businesses
+        `);
 
-        const totalServicesQuery = pool.query(`
-      SELECT COUNT(*) FROM services
-    `);
-
-        const businessesWithServicesQuery = pool.query(`
-      SELECT COUNT(DISTINCT business_id)
-      FROM services
-    `);
-
-        const [
-            totalBusinesses,
-            totalServices,
-            businessesWithServices,
-        ] = await Promise.all([
-            totalBusinessesQuery,
-            totalServicesQuery,
-            businessesWithServicesQuery,
-        ]);
+        const totalBusinesses = await totalBusinessesQuery;
 
         res.json({
             totalBusinesses: Number(
                 totalBusinesses.rows[0].count
-            ),
-            totalServices: Number(
-                totalServices.rows[0].count
-            ),
-            businessesWithServices: Number(
-                businessesWithServices.rows[0].count
             ),
         });
     } catch (err) {
