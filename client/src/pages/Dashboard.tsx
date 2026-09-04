@@ -2,6 +2,7 @@ import UserStats from '../components/UserStats';
 import BusinessStats from '../components/BusinessStats';
 import PostStats from '../components/PostStats';
 import GroupStats from "../components/GroupsStats.tsx";
+import NotificationPanel from '../components/NotificationPanel';
 
 export default function Dashboard() {
     return (
@@ -24,6 +25,8 @@ export default function Dashboard() {
                 <PostStats />
 
                 <GroupStats />
+
+                <NotificationPanel />
             </div>
         </div>
     );
