@@ -47,12 +47,28 @@ router.post('/send', async (req, res) => {
             });
         }
 
-        const data = await response.json();
+        // The external API returns void, so handle empty/non-JSON responses gracefully
+        let responseData;
+        const contentType = response.headers.get('content-type');
+        
+        try {
+            if (contentType && contentType.includes('application/json')) {
+                responseData = await response.json();
+            } else {
+                // If not JSON, read as text and ignore empty bodies
+                const text = await response.text();
+                responseData = text ? { raw: text } : { sent: true };
+            }
+        } catch (parseErr) {
+            console.warn('Could not parse external API response (likely empty body)');
+            // API returns void - empty response is expected
+            responseData = { sent: true };
+        }
 
         res.json({
             success: true,
             message: 'Notification sent successfully to all users',
-            data,
+            data: responseData,
         });
     } catch (err) {
         console.error('Notification error:', err);
