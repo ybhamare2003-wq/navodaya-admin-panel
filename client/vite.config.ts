@@ -9,6 +9,10 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
+      '/navodaya-clap': {
+        target: process.env.NAVODAYA_CLAP_API_URL ?? 'http://localhost:8080',
+        changeOrigin: true,
+      },
     },
   },
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../api/client';
+import { getErrorMessage, localApi } from '../api/client';
 
 type NotificationState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -35,7 +35,7 @@ export default function NotificationPanel() {
         setMessage('');
 
         try {
-            const response = await api.post<NotificationResponse>(
+            const response = await localApi.post<NotificationResponse>(
                 '/notifications/send',
                 {
                     title: title.trim(),
@@ -55,22 +55,9 @@ export default function NotificationPanel() {
                     setMessage('');
                 }, 5000);
             }
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to send notification:', error);
-
-            if (error instanceof Error) {
-                setMessage(error.message);
-            } else if (typeof error === 'object' && error !== null && 'response' in error) {
-                const axiosError = error as any;
-                if (axiosError.response?.data?.error) {
-                    setMessage(axiosError.response.data.error);
-                } else {
-                    setMessage('Failed to send notification. Please try again.');
-                }
-            } else {
-                setMessage('An unexpected error occurred');
-            }
-
+            setMessage(getErrorMessage(error, 'Failed to send notification. Please try again.'));
             setState('error');
         }
     };
