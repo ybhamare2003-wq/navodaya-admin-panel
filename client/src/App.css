@@ -44,13 +44,14 @@
 .refresh-button { min-width: 98px; }
 .spin-icon { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.stats-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 13px; }
+.stats-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 13px; }
 .stat-card { min-width: 0; padding: 18px 17px 17px; border: 1px solid #272e3d; border-radius: 12px; background: #171c29; }
 .stat-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; margin-bottom: 18px; }
 .stat-icon.violet { color: #ad9cff; background: #8370ff21; }
 .stat-icon.blue { color: #66b8ff; background: #3e9bff1d; }
 .stat-icon.orange { color: #ffb668; background: #ff9a451c; }
 .stat-icon.green { color: #57d9a1; background: #41cd941c; }
+.stat-icon.teal { color: #4fd8d0; background: #2fc8c21c; }
 .stat-icon.pink { color: #f18bc5; background: #ef75b01c; }
 .stat-card p { margin: 0 0 8px; overflow: hidden; color: #929bad; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .stat-card strong { color: #f3f5f9; font-size: 23px; font-weight: 680; letter-spacing: -.035em; }
