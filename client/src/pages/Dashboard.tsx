@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Activity, BriefcaseBusiness, MessageCircle, RefreshCw, Users } from 'lucide-react';
+import { Activity, UserCheck, BriefcaseBusiness, MessageCircle, RefreshCw, Users } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { api, type AdminStats } from '../api/client';
 import NotificationPanel from '../components/NotificationPanel';
@@ -24,6 +24,7 @@ export default function Dashboard() {
 
     const cards = data ? [
         { label: 'Total users', value: data.totalUsers, icon: Users, tone: 'violet' },
+        { label: 'Active users', value: data.totalActiveUsers, icon: UserCheck, tone: 'teal' },
         { label: 'Users with profiles', value: data.totalUsersWithProfiles, icon: Activity, tone: 'blue' },
         { label: 'Businesses', value: data.totalBusinesses, icon: BriefcaseBusiness, tone: 'orange' },
         { label: 'Posts', value: data.totalPosts, icon: MessageCircle, tone: 'green' },

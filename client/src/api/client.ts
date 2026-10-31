@@ -92,6 +92,7 @@ export function getErrorMessage(error: unknown, fallback: string) {
 
 export type AdminStats = {
     totalUsers: number;
+    totalActiveUsers: number;
     totalUsersWithProfiles: number;
     totalBusinesses: number;
     totalPosts: number;
