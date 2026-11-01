@@ -1,4 +1,4 @@
-import axios, { type InternalAxiosRequestConfig } from 'axios';
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
 const ACCESS_KEY = 'navodaya-admin-token';
 const REFRESH_KEY = 'navodaya-admin-refresh-token';
@@ -45,43 +45,48 @@ function refreshAccessToken() {
     return refreshing;
 }
 
-api.interceptors.request.use((config) => {
-    const token = getAccessToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
-
 type RetryConfig = InternalAxiosRequestConfig & { _retried?: boolean };
 
-api.interceptors.response.use(
-    (response) => response,
-    async (error: unknown) => {
-        if (!axios.isAxiosError(error)) return Promise.reject(error);
-        const status = error.response?.status;
-        const config = error.config as RetryConfig | undefined;
-        if (status === 401 && config && !config._retried) {
-            config._retried = true;
-            try {
-                const token = await refreshAccessToken();
-                config.headers.Authorization = `Bearer ${token}`;
-                return await api.request(config);
-            } catch {
+function installAuthInterceptors(client: AxiosInstance) {
+    client.interceptors.request.use((config) => {
+        const token = getAccessToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    });
+
+    client.interceptors.response.use(
+        (response) => response,
+        async (error: unknown) => {
+            if (!axios.isAxiosError(error)) return Promise.reject(error);
+            const status = error.response?.status;
+            const config = error.config as RetryConfig | undefined;
+            if (status === 401 && config && !config._retried) {
+                config._retried = true;
+                try {
+                    const token = await refreshAccessToken();
+                    config.headers.Authorization = `Bearer ${token}`;
+                    return await client.request(config);
+                } catch {
+                    clearSession();
+                    window.dispatchEvent(new Event('admin:session-expired'));
+                    return Promise.reject(error);
+                }
+            }
+            if (status === 401) {
                 clearSession();
                 window.dispatchEvent(new Event('admin:session-expired'));
-                return Promise.reject(error);
+            } else if (status === 403) {
+                window.dispatchEvent(new Event('admin:access-denied'));
             }
-        }
-        if (status === 401) {
-            clearSession();
-            window.dispatchEvent(new Event('admin:session-expired'));
-        } else if (status === 403) {
-            window.dispatchEvent(new Event('admin:access-denied'));
-        }
-        return Promise.reject(error);
-    },
-);
+            return Promise.reject(error);
+        },
+    );
+}
+
+installAuthInterceptors(api);
+installAuthInterceptors(localApi);
 
 export function getErrorMessage(error: unknown, fallback: string) {
     if (axios.isAxiosError<{ error?: string; message?: string }>(error)) {

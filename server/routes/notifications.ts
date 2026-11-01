@@ -26,11 +26,14 @@ router.post('/send', async (req, res) => {
             });
         }
 
+        const authorization = req.get('authorization');
+
         // Call external notification API
         const response = await fetch(EXTERNAL_API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...(authorization ? { Authorization: authorization } : {}),
             },
             body: JSON.stringify({
                 title: title.trim(),
@@ -41,6 +44,12 @@ router.post('/send', async (req, res) => {
         if (!response.ok) {
             const errorData = await response.text();
             console.error(`External API error: ${response.status}`, errorData);
+
+            if (response.status === 401 || response.status === 403) {
+                const contentType = response.headers.get('content-type');
+                if (contentType) res.set('content-type', contentType);
+                return res.status(response.status).send(errorData);
+            }
 
             return res.status(502).json({
                 error: `Failed to send notification. External service returned ${response.status}`,
